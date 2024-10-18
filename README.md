@@ -77,5 +77,5 @@ The Minimum Viable Product for this project will be a functional prototype of th
 
 ### Credits:
  * [David Rodriguez](https://drod75.github.io/)
- * [Nickalous Yao]()
+ * [Nicklaus Yao](https://github.com/NickYaoo)
  * [Tony Liu](https://tonyliu2004.github.io/)
