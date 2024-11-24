@@ -1,81 +1,61 @@
-# Food Classification
-### **Context**: 
-A project made for the CUNY Tech Prep Fall 2024 Cohort 10 Data Science Track, which right now aims to classify American based food.
+[![Contributors][contributors-shield]][contributors-url]
+[![Stargazers][stars-shield]][stars-url]
+[![GitHub Repo][github-shield]][https://github.com/TonyLiu2004/Dish-Classifier-ML]
 
-### **Task**: 
-Our objective is to develop a machine learning model that accurately classifies various dishes from images and outputs their names along with a confidence score.
+[![Python][Python]][Python-url]
+[![Streamlit][Streamlit]][Streamlit-url]
+[![Tensorflow][Tensorflow]][Tensorflow-url]
+[![HuggingFace][HuggingFace]][HuggingFace-url]
+imagine model badge is here
+[![Kaggle][Kaggle]][Kaggle-url]
 
-### **Concept**: 
-The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features.
+# [American Food Classifier](https://github.com/TonyLiu2004/Dish-Classifier-ML)
 
-### **Minimum Viable Product**: 
-The Minimum Viable Product for this project will be a functional prototype of the food classification model that can:
- 1. Accept Input Images: Users can upload images of dishes.
- 2. Provide Classification Results: The model will return the name of the dish and a confidence score.
- 3.  User Interface: A simple web interface where users can interact with the model.
+## Who are we?
+* [Tony Liu](https://tonyliu2004.github.io/)
+    * Tony Liu is a junior at Hunter College.
 
-### **Further Goals**
- 1. Model returns dish ingredients
- 2. Identify cuisine
- 3. Estimate calorie
- 4. Provide recipe
- 5. Suggest dishes based on a user prompt of ingredients
-   * Identify general ingredients from an image and suggest a dish that the user can make with the existing ingredients
+* [Nicklaus Yao]()
+    * Nicklaus Yao is a
+
+* [David Rodriguez](https://drod75.github.io/)
+    * David Rodriguez is a junior at Brooklyn College studying computer science with a minor in data science, 
+    he spends his time working on projects and participating in his college community. 
 
 
+## Purpose
+The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform'
+users about what it is they are eating, including potential nutritional value and an AI generated response on how there 
+dish might have been prepared.
 
-### **Challenges**:
- 1. Data Quality:
-   * Challenge:
-     * Obtaining accurate pictures of food and or making sure the AI model will be able to detect the same dish from different pictures.
-   * Possible Solution:
-     * Making sure the AI can detect key features and compare them accurately, while at the same time training the AI on various pictures of the same type of food.
-     * Obtaining pictures with the same food but different lighting, background, and color filter (unsure of results).
- 2. Model Accuracy:
-   * Challenge:
-     * Making sure the AI model does not confuse an apple for an orange, since they are both fruit and round and usually a bright color. Another example is two dishes of soup from different regions and cultures.
-   * Possible Solution:
-     * Pattern identification and texture is a key, knowing the common ingredient in a specific culture or region and how that affects the dish overall.
-     * Showing the model foods from the same culture together, and how certain dishes are related to each other (risk).
- 3. Labeling - Overfitting/Underfitting :
-   * Challenge:
-     * Different cultures may have unique names and variations for the same dish, complicating the labeling process.
-   * Possible Solutions:
-     * Provide other dish names within a certain accuracy margin.
-     * Use AI to modify and generalize the input (risky)
-     * Use AI to generate alternate dish names from output 
+
+## Key Features
+* Image classification
+* AI generated nutritional information
+* AI generated 
+recipe used for the dish
+
+## Tutorial
+To use our site please follow the instructions below:
+1. Go to the site via this url: https://github.com/TonyLiu2004/Dish-Classifier-ML
+2. Click on the "Upload Image" button
+3. Wait for the image to be processed
+4. Done!
 
 
 
-### **Risks**:
- 1. Ethics:  Accessibility
-   * Mitigation: Making sure the project takes in mind disabilities and how different people may  not be able to use certain features effectively.
- 2. Misidentification: Complex dishes
-   * Mitigation: Intensive datasets and context perfish trained on, ingredients and even how to where it was cooked could be needed.
- 3. Possible AI Usage: Over usage and reliance
-   * Mitigation: Users may rely on the AI too much and take its word as 100 percent accurate, telling users to always ask a person if possible is a great option.
- 4. Data Privacy: Collecting possible user-uploaded images may raise privacy concerns.
-   * Mitigation: Implement a privacy policy and ensure that user data stays anonymous, or obtain user consent for data usage.
-
-
-
-
-### **Implementation**
- 1. Architecture:
-   * Github Repo that divides the AI training model to the application interface and compatibility. Folder structure and coding structure will be taken into account.
- 2. Programming Languages:
-   * Python, Html
- 3. APIs:
-   * Pandas, Numpy, Tensorflow, streamlit(maybe)
- 4. Database:
-   * (Pending Could Change) Heroku, Mongodb Atlus
- 5. Deployment:
-   * streamlit, heroku, aws, render
-
-
-
-
-### Credits:
- * [David Rodriguez](https://drod75.github.io/)
- * [Nicklaus Yao](https://github.com/NickYaoo)
- * [Tony Liu](https://tonyliu2004.github.io/)
+[contributors-shield]: https://img.shields.io/github/contributors/TonyLiu2004/Dish-Classifier-ML.svg?style=for-the-badge
+[contributors-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML/graphs/contributors
+[stars-shield]: https://img.shields.io/github/stars/GeorgiosIoannouCoder/realesrgan.svg?style=for-the-badge
+[stars-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML/stargazers
+[github-shield]: https://img.shields.io/badge/-GitHub-black.svg?style=for-the-badge&logo=github&colorB=000
+[Python]: https://img.shields.io/badge/python-FFDE57?style=for-the-badge&logo=python&logoColor=4584B6
+[Python-url]: https://www.python.org/
+[Streamlit]: https://img.shields.io/badge/streamlit-ffffff?style=for-the-badge&logo=streamlit&logoColor=ff0000
+[Streamlit-url]: https://streamlit.io/
+[Tensorflow]: https://img.shields.io/badge/tensorflow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white 
+[Tensorflow-url]: https://www.tensorflow.org/
+[HuggingFace]: https://img.shields.io/badge/huggingface-FFD000?style=for-the-badge&logo=huggingface&logoColor=white
+[HuggingFace-url]: https://huggingface.co/
+[Kaggle]: https://img.shields.io/badge/kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white
+[Kaggle-url]: https://www.kaggle.com/
