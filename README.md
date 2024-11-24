@@ -9,7 +9,7 @@
 imagine model badge is here
 [![Kaggle][Kaggle]][Kaggle-url]
 
-# [American Food Classifier](https://github.com/TonyLiu2004/Dish-Classifier-ML)
+# Food Chain
 
 ## Who are we?
 * [Tony Liu](https://tonyliu2004.github.io/)
@@ -24,7 +24,7 @@ imagine model badge is here
 
 
 ## Purpose
-The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform users about what it is they are eating, including potential nutritional value and an AI generated response on how there dish might have been prepared.
+The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform users about what it is they are eating, including potential nutritional value and an AI generated response on how there dish might have been prepared. 
 
 
 ## Key Features
