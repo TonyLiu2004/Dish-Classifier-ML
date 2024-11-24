@@ -5,9 +5,10 @@
 [![Python][Python]][Python-url]
 [![Streamlit][Streamlit]][Streamlit-url]
 [![Tensorflow][Tensorflow]][Tensorflow-url]
-[![HuggingFace][HuggingFace]][HuggingFace-url]
-imagine model badge is here
+[![LangChain][LangChain]][LangChain-url]
+[![OpenAI ChatGPT][OpenAI ChatGPT]][OpenAI ChatGPT-url]
 [![Kaggle][Kaggle]][Kaggle-url]
+[![MongoDB][MongoDB]][MongoDB-url]
 
 # Food Chain
 Welcome to Food Chain, a top of the line food classifier that everyday people can use to figure out what they are eating and the common values associated with it such as recipe, nutrients, and even the origin! Please tell us how you liked our app and thank you for using it!
@@ -56,7 +57,11 @@ To use our site please follow the instructions below:
 [Streamlit-url]: https://streamlit.io/
 [Tensorflow]: https://img.shields.io/badge/tensorflow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white 
 [Tensorflow-url]: https://www.tensorflow.org/
-[HuggingFace]: https://img.shields.io/badge/huggingface-FFD000?style=for-the-badge&logo=huggingface&logoColor=white
-[HuggingFace-url]: https://huggingface.co/
+[LangChain]: https://img.shields.io/badge/langchain-007FFF?style=for-the-badge&logo=langchain&logoColor=white
+[LangChain-url]: https://www.langchain.com/
+[OpenAI ChatGPT]: https://img.shields.io/badge/OpenAI-FFD000?style=for-the-badge&logo=OpenAI&logoColor=white
+[OpenAI ChatGPT-url]: https://chat.openai.com/
 [Kaggle]: https://img.shields.io/badge/kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white
 [Kaggle-url]: https://www.kaggle.com/
+[MongoDB]: https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white
+[MongoDB-url]: https://www.mongodb.com/
