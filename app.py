@@ -1,0 +1,301 @@
+"""
+WORKING KERAS AND TENSORFLOW VERSION:
+TensorFlow version: 2.16.1
+Keras version: 3.3.3
+"""
+
+import numpy as np 
+import pandas as pd  # type: ignore
+import os
+import keras
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from dotenv import load_dotenv
+import pymongo
+import streamlit as st
+from sentence_transformers import SentenceTransformer
+from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain.schema.runnable import RunnablePassthrough
+from langchain.schema.output_parser import StrOutputParser
+from PIL import Image
+import json
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+@st.cache_resource
+def loadEmbedding():
+    embedding = SentenceTransformer("thenlper/gte-large") 
+    return embedding
+embedding = loadEmbedding()
+
+
+def getEmbedding(text):
+    if not text.strip():
+        print("Text was empty")
+        return []
+    encoded = embedding.encode(text)
+    return encoded.tolist()
+
+
+# Connect to MongoDB
+def get_mongo_client(mongo_uri):
+    try:
+        client = pymongo.MongoClient(mongo_uri)
+        print("Connection to MongoDB successful")
+        return client
+    except pymongo.errors.ConnectionFailure as e:
+        print(f"Connection failed: {e}")
+        return None
+
+mongo_uri = os.getenv("MONGO_URI_RAG_RECIPE")
+if not mongo_uri:
+    print("MONGO_URI not set in env")
+
+mongo_client = get_mongo_client(mongo_uri)
+
+mongo_db = mongo_client['recipes']
+mongo_collection = mongo_db['recipesCollection']
+
+def vector_search(user_query, collection):
+    query_embedding = getEmbedding(user_query)
+    if query_embedding is None:
+        return "Invalid query or embedding gen failed"
+    vector_search_stage = {
+        "$vectorSearch": {
+            "index": "vector_index",
+            "queryVector": query_embedding,
+            "path": "embedding",
+            "numCandidates": 150,  # Number of candidate matches to consider
+            "limit": 4  # Return top 4 matches
+        }
+    }
+
+    unset_stage = {
+        "$unset": "embedding"  # Exclude the 'embedding' field from the results
+    }
+
+    project_stage = {
+        "$project": {
+            "_id": 0,  # Exclude the _id field
+            "name": 1,
+            "minutes": 1,
+            "tags": 1,
+            "n_steps": 1,
+            "description": 1,
+            "ingredients": 1,
+            "n_ingredients": 1,
+            "formatted_nutrition": 1,
+            "formatted_steps": 1,
+            "score": {
+                "$meta": "vectorSearchScore"  # Include the search score
+            }
+        }
+    }
+
+    pipeline = [vector_search_stage, unset_stage, project_stage]
+    results = mongo_collection.aggregate(pipeline)
+    return list(results)
+
+# only for testing
+# def get_search_result(query, collection):
+#     get_knowledge = vector_search(query, mongo_collection)
+#     print(get_knowledge)
+#     search_result = ""
+#     for result in get_knowledge:
+#         search_result += f"Name: {result.get('name')}, Minutes: {result.get('minutes')}, Tags: {result.get('tags')}, Number of Steps: {result.get('n_steps')}, Description: {result.get('description')}, Ingredients: {result.get('ingredients')}, Number of Ingredients: {result.get('n_ingredients')}, Formatted Nutrition: {result.get('formatted_nutrition')}, Formatted Steps: {result.get('formatted_steps')}, Score: {result.get('score')}"
+#     return search_result
+
+def mongo_retriever(query):
+    documents = vector_search(query, mongo_collection)
+    return documents
+
+# Old template
+# template = """
+# You are an assistant for question-answering tasks.
+# Use the provided context to directly answer the question at the end.
+# If the context contains multiple recipes or options, focus on providing the most relevant answer to the question without referencing the other options.
+# Avoid using phrases like "among the provided options" or "you can choose from."
+# If the answer is unclear or the context does not fully address the question, simply say "I don't know."
+# Do not list multiple options unless explicitly asked to do so.
+# Context: {context}
+
+# Question: {question}
+# """
+
+template = """
+You are an assistant for generating results based on user questions.
+Use the provided context to generate a result based on the following JSON format:
+{{
+  "name": "Recipe Name",
+  "minutes": 0,
+  "tags": [
+    "tag1",
+    "tag2",
+    "tag3"
+  ],
+  "n_steps": 0,
+  "description": "A GENERAL description of the recipe goes here.",
+  "ingredients": [
+    "ingredient1",
+    "ingredient2",
+    "ingredient3"
+  ],
+  "n_ingredients": 0,
+  "formatted_nutrition": [
+    "Calorie : per serving",
+    "Total Fat : % daily value",
+    "Sugar : % daily value",
+    "Sodium : % daily value",
+    "Protein : % daily value",
+    "Saturated Fat : % daily value",
+    "Total Carbohydrate : % daily value"
+  ],
+  "formatted_steps": [
+    "1. Step 1 of the recipe.",
+    "2. Step 2 of the recipe.",
+    "3. Step 3 of the recipe."
+  ]
+}}
+
+Instructions:
+1. Focus on the user's specific request and avoid irrelevant ingredients or approaches.
+2. Do not return anything other than the JSON.
+3. If the answer is unclear or the context does not fully address the prompt, return []
+4. Base the response on simple, healthy, and accessible ingredients and techniques.
+
+Context: {context}
+
+When choosing a recipe from the context, FOLLOW these instructions:
+1. The recipe should be makeable from scratch, using only proper ingredients and not other dishes or pre-made recipes
+
+Question: {question}
+"""
+
+custom_rag_prompt = ChatPromptTemplate.from_template(template)
+
+
+
+llm = ChatOpenAI(
+    model_name="gpt-3.5-turbo",
+    temperature=0.2)
+
+
+rag_chain = (
+    {"context": mongo_retriever,  "question": RunnablePassthrough()}
+    | custom_rag_prompt
+    | llm
+    | StrOutputParser()
+)
+
+def get_response(query):
+    return rag_chain.invoke(query)
+
+##############################################
+# Classifier
+img_size = 224
+
+#testing cache
+@st.cache_resource
+def loadModel():
+    model = load_model('models/efficientnet-fine-6.keras')
+    return model
+
+model = loadModel()
+
+
+class_names = [
+    "apple_pie", "baby_back_ribs", "baklava", "beef_carpaccio", "beef_tartare", "beet_salad", 
+    "beignets", "bibimbap", "bread_pudding", "breakfast_burrito", "bruschetta", "caesar_salad", 
+    "cannoli", "caprese_salad", "carrot_cake", "ceviche", "cheese_plate", "cheesecake", "chicken_curry", 
+    "chicken_quesadilla", "chicken_wings", "chocolate_cake", "chocolate_mousse", "churros", "clam_chowder", 
+    "club_sandwich", "crab_cakes", "creme_brulee", "croque_madame", "cup_cakes", "deviled_eggs", "donuts", 
+    "dumplings", "edamame", "eggs_benedict", "escargots", "falafel", "filet_mignon", "fish_and_chips", "foie_gras", 
+    "french_fries", "french_onion_soup", "french_toast", "fried_calamari", "fried_rice", "frozen_yogurt", 
+    "garlic_bread", "gnocchi", "greek_salad", "grilled_cheese_sandwich", "grilled_salmon", "guacamole", "gyoza", 
+    "hamburger", "hot_and_sour_soup", "hot_dog", "huevos_rancheros", "hummus", "ice_cream", "lasagna", 
+    "lobster_bisque", "lobster_roll_sandwich", "macaroni_and_cheese", "macarons", "miso_soup", "mussels", 
+    "nachos", "omelette", "onion_rings", "oysters", "pad_thai", "paella", "pancakes", "panna_cotta", "peking_duck", 
+    "pho", "pizza", "pork_chop", "poutine", "prime_rib", "pulled_pork_sandwich", "ramen", "ravioli", "red_velvet_cake", 
+    "risotto", "samosa", "sashimi", "scallops", "seaweed_salad", "shrimp_and_grits", "spaghetti_bolognese", 
+    "spaghetti_carbonara", "spring_rolls", "steak", "strawberry_shortcake", "sushi", "tacos", "takoyaki", "tiramisu", 
+    "tuna_tartare", "waffles"
+]
+
+def classifyImage(input_image):
+    input_image = input_image.resize((img_size, img_size))
+    input_array = tf.keras.utils.img_to_array(input_image)
+
+    # Add a batch dimension 
+    input_array = tf.expand_dims(input_array, 0)  # (1, 224, 224, 3)
+    
+    predictions = model.predict(input_array)[0]
+    print(f"Predictions: {predictions}")
+
+    # Sort predictions to get top 3
+    top_indices = np.argsort(predictions)[-3:][::-1]
+    
+    # Prepare the top 3 predictions with their class names and percentages
+    top_predictions = [(class_names[i], predictions[i] * 100) for i in top_indices]
+    for i, (class_name, confidence) in enumerate(top_predictions, 1):
+        print(f"{i}. Predicted {class_name} with {confidence:.2f}% Confidence")
+
+    return top_predictions
+
+##############################################
+
+# #Streamlit
+
+# RAG Section
+st.title("RAG Recipe")
+
+query = st.text_input("Enter your query:")
+
+#output
+def display_response(response):
+    """
+    Function to format a JSON response into Streamlit's `st.write()` format.
+    """
+    if isinstance(response, str):
+        # Convert JSON string to dictionary if necessary
+        response = json.loads(response)
+    
+    # Use Streamlit's `st.write` to display the JSON response
+    st.write("### Recipe Details")
+    st.write(f"**Name:** {response['name']}")
+    st.write(f"**Preparation Time:** {response['minutes']} minutes")
+    st.write(f"**Description:** {response['description']}")
+    st.write(f"**Tags:** {', '.join(response['tags'])}")
+    st.write("### Ingredients")
+    st.write(", ".join(response['ingredients']))
+    st.write(f"**Total Ingredients:** {response['n_ingredients']}")
+    st.write("### Nutrition Information (per serving)")
+    st.write(", ".join(response['formatted_nutrition']))
+    st.write(f"**Number of Steps:** {response['n_steps']}")
+    st.write("### Steps")
+    for step in response['formatted_steps']:
+        st.write(step)
+if query:
+    response = get_response(query)
+    display_response(response)
+#################
+
+# Image Classification Section
+
+uploaded_image = st.file_uploader("Choose an image...", type="jpg")
+if uploaded_image is not None:
+    # Open the image
+    input_image = Image.open(uploaded_image)
+
+    # Display the image
+    st.image(input_image, caption="Uploaded Image.", use_column_width=True)
+
+    # Classify the image and display the result
+    predictions = classifyImage(input_image)
+    print(predictions)
+
+    # Show the top predictions with percentages
+    st.write("Top Predictions:")
+    for class_name, confidence in predictions:
+        st.write(f"{class_name}: {confidence:.2f}%")

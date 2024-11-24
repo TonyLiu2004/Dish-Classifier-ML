@@ -1,4 +1,2 @@
 imageclassification/
-moreData/
-models/
-data/
+.env
