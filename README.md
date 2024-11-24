@@ -10,6 +10,8 @@ imagine model badge is here
 [![Kaggle][Kaggle]][Kaggle-url]
 
 # Food Chain
+Welcome to Food Chain, a top of the line food classifier that everyday people can use to figure out what they are eating and the common values associated with it such as recipe, nutrients, and even the origin! Please tell us how you liked our app and thank you for using it!
+
 
 ## Who are we?
 * [Tony Liu](https://tonyliu2004.github.io/)
@@ -33,13 +35,13 @@ The project aims to use machine learning and computer vision techniques to analy
 * AI generated 
 recipe used for the dish
 
+
 ## Tutorial
 To use our site please follow the instructions below:
 1. Go to the site via this url: https://github.com/TonyLiu2004/Dish-Classifier-ML
 2. Click on the "Upload Image" button
 3. Wait for the image to be processed
 4. Done!
-
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/TonyLiu2004/Dish-Classifier-ML.svg?style=for-the-badge
