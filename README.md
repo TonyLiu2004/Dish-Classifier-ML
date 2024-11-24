@@ -1,6 +1,6 @@
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![GitHub Repo][github-shield]][https://github.com/TonyLiu2004/Dish-Classifier-ML]
+[![GitHub Repo][github-shield]][github-repo-url]
 
 [![Python][Python]][Python-url]
 [![Streamlit][Streamlit]][Streamlit-url]
@@ -48,6 +48,7 @@ To use our site please follow the instructions below:
 [contributors-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML/graphs/contributors
 [stars-shield]: https://img.shields.io/github/stars/GeorgiosIoannouCoder/realesrgan.svg?style=for-the-badge
 [stars-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML/stargazers
+[github-repo-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML
 [github-shield]: https://img.shields.io/badge/-GitHub-black.svg?style=for-the-badge&logo=github&colorB=000
 [Python]: https://img.shields.io/badge/python-FFDE57?style=for-the-badge&logo=python&logoColor=4584B6
 [Python-url]: https://www.python.org/
