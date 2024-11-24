@@ -18,7 +18,7 @@ Welcome to Food Chain, a top of the line food classifier that everyday people ca
 * [Tony Liu](https://tonyliu2004.github.io/)
     * Tony Liu is a junior at Hunter College.
 
-* [Nicklaus Yao]()
+* [Nicklaus Yao](https://www.linkedin.com/in/nicklausyao/)
     * Nicklaus Yao is a senior at Hunter College.
 
 * [David Rodriguez](https://drod75.github.io/)
@@ -27,7 +27,7 @@ Welcome to Food Chain, a top of the line food classifier that everyday people ca
 
 
 ## Purpose
-The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform users about what it is they are eating, including potential nutritional value and an AI generated response on how there dish might have been prepared. We want users to have an easy way to figure out what their favorite foods contain, to know any allergens in the food and to better connect to the food around them. This tool can also tell users the calories of their dish, they can figure out the nutrients with only a few steps!
+The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform users about what it is they are eating, including potential nutritional value and an AI generated response on how their dish might have been prepared. We want users to have an easy way to figure out what their favorite foods contain, to know any allergens in the food and to better connect to the food around them. This tool can also tell users the calories of their dish, they can figure out the nutrients with only a few steps!
 
 
 ## Key Features
