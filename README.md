@@ -18,7 +18,7 @@ Welcome to Food Chain, a top of the line food classifier that everyday people ca
     * Tony Liu is a junior at Hunter College.
 
 * [Nicklaus Yao]()
-    * Nicklaus Yao is a
+    * Nicklaus Yao is a senior at Hunter College.
 
 * [David Rodriguez](https://drod75.github.io/)
     * David Rodriguez is a junior at Brooklyn College studying computer science with a minor in data science, 
