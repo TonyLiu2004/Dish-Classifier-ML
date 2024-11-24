@@ -32,8 +32,8 @@ The project aims to use machine learning and computer vision techniques to analy
 ## Key Features
 * Image classification
 * AI generated nutritional information
-* AI generated 
-recipe used for the dish
+* AI generated recipe used for the dish
+* Historical Data about the dish such as origin and where you can get it!
 
 
 ## Tutorial
