@@ -37,6 +37,14 @@ The project aims to use machine learning and computer vision techniques to analy
 * Historical Data about the dish such as origin and where you can get it!
 
 
+## How we did it
+We used a combination of machine learning and computer vision techniques to analyze food images and identify them, we used the [EfficientNet](https://www.tensorflow.org/api_docs/python/tf/keras/applications/efficientnet8) model to classify the images and train it in order to get the results we needed. Our data was from the [Food Recognition](https://www.kaggle.com/datasets/sainikhileshreddy/food-recognition-2022/data) Database on Kaggle. We also used [LangChain](https://www.langchain.com/) to generate the recipe and [MongoDB](https://www.mongodb.com/) to store the data for the RAG we used for the recipe generation.
+After this we then built our app using [Streamlit](https://www.streamlit.io/) and implemented everything we used so far in order to develop an app that can classify images and generate recipes based on the image, or even just with the user's query of a recipe.
+
+
+## Demo
+
+
 ## Tutorial
 To use our site please follow the instructions below:
 1. Go to the site via this url: https://github.com/TonyLiu2004/Dish-Classifier-ML
