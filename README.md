@@ -24,9 +24,7 @@ imagine model badge is here
 
 
 ## Purpose
-The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform'
-users about what it is they are eating, including potential nutritional value and an AI generated response on how there 
-dish might have been prepared.
+The project aims to use machine learning and computer vision techniques to analyze food images and identify them. By using diverse datasets, the model will learn to recognize dishes based on visual features. Our project aims to inform users about what it is they are eating, including potential nutritional value and an AI generated response on how there dish might have been prepared.
 
 
 ## Key Features
