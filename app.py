@@ -18,8 +18,14 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
+from langchain_core.messages import HumanMessage, SystemMessage
 from PIL import Image
 import json
+
+st.set_page_config(
+    page_title="Food Chain", 
+    page_icon="🍴"
+)
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -164,6 +170,7 @@ Instructions:
 2. Do not return anything other than the JSON.
 3. If the answer is unclear or the context does not fully address the prompt, return []
 4. Base the response on simple, healthy, and accessible ingredients and techniques.
+5. Rewrite the description in third person
 
 Context: {context}
 
@@ -233,26 +240,25 @@ def classifyImage(input_image):
     predictions = model.predict(input_array)[0]
     print(f"Predictions: {predictions}")
 
-    # Sort predictions to get top 3
-    top_indices = np.argsort(predictions)[-3:][::-1]
+    # Sort predictions to get top 5
+    top_indices = np.argsort(predictions)[-5:][::-1]
     
-    # Prepare the top 3 predictions with their class names and percentages
+    # Prepare the top 5 predictions with their class names and percentages
     top_predictions = [(class_names[i], predictions[i] * 100) for i in top_indices]
     for i, (class_name, confidence) in enumerate(top_predictions, 1):
         print(f"{i}. Predicted {class_name} with {confidence:.2f}% Confidence")
 
     return top_predictions
 
+def capitalize_after_number(input_string):
+    # Split the string on the first period
+    if ". " in input_string:
+        num, text = input_string.split(". ", 1)
+        return f"{num}. {text.capitalize()}"
+    return input_string
 ##############################################
 
-# #Streamlit
-
-# RAG Section
-st.title("RAG Recipe")
-
-query = st.text_input("Enter your query:")
-
-#output
+#for displaying RAG recipe response
 def display_response(response):
     """
     Function to format a JSON response into Streamlit's `st.write()` format.
@@ -261,30 +267,99 @@ def display_response(response):
         # Convert JSON string to dictionary if necessary
         response = json.loads(response)
     
-    # Use Streamlit's `st.write` to display the JSON response
     st.write("### Recipe Details")
-    st.write(f"**Name:** {response['name']}")
+    st.write(f"**Name:** {response['name'].capitalize()}")
     st.write(f"**Preparation Time:** {response['minutes']} minutes")
-    st.write(f"**Description:** {response['description']}")
+    st.write(f"**Description:** {response['description'].capitalize()}")
     st.write(f"**Tags:** {', '.join(response['tags'])}")
     st.write("### Ingredients")
-    st.write(", ".join(response['ingredients']))
+    st.write(", ".join([ingredient.capitalize() for ingredient in response['ingredients']]))
     st.write(f"**Total Ingredients:** {response['n_ingredients']}")
     st.write("### Nutrition Information (per serving)")
     st.write(", ".join(response['formatted_nutrition']))
     st.write(f"**Number of Steps:** {response['n_steps']}")
     st.write("### Steps")
     for step in response['formatted_steps']:
-        st.write(step)
-if query:
-    response = get_response(query)
-    display_response(response)
+        st.write(capitalize_after_number(step))
+
+def display_dishes_in_grid(dishes, cols=3):
+    rows = len(dishes) // cols + int(len(dishes) % cols > 0)
+    for i in range(rows):
+        cols_data = dishes[i*cols:(i+1)*cols]
+        cols_list = st.columns(len(cols_data))
+        for col, dish in zip(cols_list, cols_data):
+            with col:
+                st.sidebar.write(dish.replace("_", " ").capitalize())
+# #Streamlit
+
+#Left sidebar title
+st.sidebar.markdown(
+    "<h1 style='font-size:32px;'>RAG Recipe</h1>", 
+    unsafe_allow_html=True
+)
+
+st.sidebar.write("Upload an image and/or enter a query to get started! Explore our trained dish types listed below for guidance.")
+
+uploaded_image = st.sidebar.file_uploader("Choose an image:", type="jpg")
+query = st.sidebar.text_area("Enter your query:", height=100)
+
+# gap
+st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
+selected_dish = st.sidebar.selectbox(
+    "Search for a dish that our model can classify:", 
+    options=class_names,
+    index=0  
+)
+
+# Right title
+st.title("Results")
 #################
 
 # Image Classification Section
+if uploaded_image and query:
+    # Open the image
+    input_image = Image.open(uploaded_image)
 
-uploaded_image = st.file_uploader("Choose an image...", type="jpg")
-if uploaded_image is not None:
+    # Display the image
+    st.image(input_image, caption="Uploaded Image.", use_container_width=True)
+        
+    predictions = classifyImage(input_image)
+    fpredictions = ""
+
+    # Show the top predictions with percentages
+    st.write("Top Predictions:")
+    for class_name, confidence in predictions:
+        if int(confidence) > 0.05:
+            fpredictions += f"{class_name}: {confidence:.2f}%,"
+        st.write(f"{class_name}: {confidence:.2f}%")
+    print(fpredictions)
+
+    # call openai to pick the best classification result based on query
+    openAICall = [
+        SystemMessage(
+            content = "You are a helpful assistant that identifies the best match between classified food items and a user's request based on provided classifications and keywords."
+        ),
+        HumanMessage( 
+            content = f"""
+                Based on the following image classification with percentages of each food:
+                {fpredictions}
+                And the following user request:
+                {query}
+                Return to me JUST ONE of the classified images that most relates to the user request, based on the relevance of the user query.
+                in the format: [dish]
+            """
+        ),
+    ]
+
+    # Call the OpenAI API
+    openAIresponse = llm.invoke(openAICall)
+    print("AI CALL RESPONSE: ", openAIresponse.content)
+
+    # RAG the openai response and display
+    print("RAG INPUT", openAIresponse.content + " " + query)
+    RAGresponse = get_response(openAIresponse.content + " " + query)
+    display_response(RAGresponse)
+elif uploaded_image is not None:
     # Open the image
     input_image = Image.open(uploaded_image)
 
@@ -293,9 +368,18 @@ if uploaded_image is not None:
 
     # Classify the image and display the result
     predictions = classifyImage(input_image)
-    print(predictions)
+    fpredictions = ""
 
     # Show the top predictions with percentages
     st.write("Top Predictions:")
     for class_name, confidence in predictions:
+        if int(confidence) > 0.05:
+            fpredictions += f"{class_name}: {confidence:.2f}%,"
         st.write(f"{class_name}: {confidence:.2f}%")
+    print(fpredictions)
+
+elif query:
+    response = get_response(query)
+    display_response(response)
+else:
+    st.write("Please input an image and/or a prompt.")
