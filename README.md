@@ -10,7 +10,9 @@
 [![Kaggle][Kaggle]][Kaggle-url]
 [![MongoDB][MongoDB]][MongoDB-url]
 
-# Food Chain
+
+# FOOD CHAIN
+
 Welcome to Food Chain, a top of the line food classifier that everyday people can use to figure out what they are eating and the common values associated with it such as recipe, nutrients, and even the origin! Please tell us how you liked our app and thank you for using it!
 
 
@@ -38,7 +40,13 @@ The project aims to use machine learning and computer vision techniques to analy
 
 
 ## How we did it
+This idea started off as a thought, when deciding what to do for our fall semester project, we thought about what
+we could do and decided to settle on doing something revolving around food, after thinking about it for a while, we
+decided to go look for datasets. After finding various datasets we realized we wanted to create a food classifier that
+could classify images and generate the name of the dish, once our full team was assembled we then started to get to work on our project, a food classification model.
+
 We used a combination of machine learning and computer vision techniques to analyze food images and identify them, we used the [EfficientNet](https://www.tensorflow.org/api_docs/python/tf/keras/applications/efficientnet8) model to classify the images and train it in order to get the results we needed. Our data was from the [Food Recognition](https://www.kaggle.com/datasets/sainikhileshreddy/food-recognition-2022/data) Database on Kaggle. We also used [LangChain](https://www.langchain.com/) to generate the recipe and [MongoDB](https://www.mongodb.com/) to store the data for the RAG we used for the recipe generation.
+
 After this we then built our app using [Streamlit](https://www.streamlit.io/) and implemented everything we used so far in order to develop an app that can classify images and generate recipes based on the image, or even just with the user's query of a recipe.
 
 
