@@ -52,6 +52,19 @@ After this we then built our app using [Streamlit](https://www.streamlit.io/) an
 
 ## Demo
 
+## Challenges
+On our path to complete this project a couple of challenges we ran into were:
+* Dataset Issues
+* Memory Issues
+* Site building Issues
+
+
+## What we did to resolve them
+To deal with our issues we:
+* Used advanced techniques to train our model on our diverse pictures
+* Found methods to increase our memory cap so we could train our model to be mor accurate and well rounded
+* Combined different libraries and kept version control in mind, allowing us to create environments where each developer could correctly run the files necessary.
+
 
 ## Tutorial
 To use our site please follow the instructions below:
