@@ -1,16 +1,9 @@
-"""
-WORKING KERAS AND TENSORFLOW VERSION:
-TensorFlow version: 2.16.1
-Keras version: 3.3.3
-"""
-
 import numpy as np 
 import pandas as pd  # type: ignore
 import os
 import keras
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-from dotenv import load_dotenv
 import pymongo
 import streamlit as st
 from sentence_transformers import SentenceTransformer
@@ -21,14 +14,15 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain_core.messages import HumanMessage, SystemMessage
 from PIL import Image
 import json
+from streamlit_extras.bottom_container import bottom
 
 st.set_page_config(
     page_title="Food Chain", 
     page_icon="🍴"
 )
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+mongo_uri = os.getenv("MONGO_URI_RAG_RECIPE")
 
 @st.cache_resource
 def loadEmbedding():
@@ -55,7 +49,6 @@ def get_mongo_client(mongo_uri):
         print(f"Connection failed: {e}")
         return None
 
-mongo_uri = os.getenv("MONGO_URI_RAG_RECIPE")
 if not mongo_uri:
     print("MONGO_URI not set in env")
 
@@ -104,31 +97,10 @@ def vector_search(user_query, collection):
     results = mongo_collection.aggregate(pipeline)
     return list(results)
 
-# only for testing
-# def get_search_result(query, collection):
-#     get_knowledge = vector_search(query, mongo_collection)
-#     print(get_knowledge)
-#     search_result = ""
-#     for result in get_knowledge:
-#         search_result += f"Name: {result.get('name')}, Minutes: {result.get('minutes')}, Tags: {result.get('tags')}, Number of Steps: {result.get('n_steps')}, Description: {result.get('description')}, Ingredients: {result.get('ingredients')}, Number of Ingredients: {result.get('n_ingredients')}, Formatted Nutrition: {result.get('formatted_nutrition')}, Formatted Steps: {result.get('formatted_steps')}, Score: {result.get('score')}"
-#     return search_result
-
 def mongo_retriever(query):
     documents = vector_search(query, mongo_collection)
     return documents
 
-# Old template
-# template = """
-# You are an assistant for question-answering tasks.
-# Use the provided context to directly answer the question at the end.
-# If the context contains multiple recipes or options, focus on providing the most relevant answer to the question without referencing the other options.
-# Avoid using phrases like "among the provided options" or "you can choose from."
-# If the answer is unclear or the context does not fully address the question, simply say "I don't know."
-# Do not list multiple options unless explicitly asked to do so.
-# Context: {context}
-
-# Question: {question}
-# """
 
 template = """
 You are an assistant for generating results based on user questions.
@@ -164,24 +136,19 @@ Use the provided context to generate a result based on the following JSON format
     "3. Step 3 of the recipe."
   ]
 }}
-
 Instructions:
 1. Focus on the user's specific request and avoid irrelevant ingredients or approaches.
 2. Do not return anything other than the JSON.
 3. If the answer is unclear or the context does not fully address the prompt, return []
 4. Base the response on simple, healthy, and accessible ingredients and techniques.
 5. Rewrite the description in third person
-
 Context: {context}
-
 When choosing a recipe from the context, FOLLOW these instructions:
 1. The recipe should be makeable from scratch, using only proper ingredients and not other dishes or pre-made recipes
-
 Question: {question}
 """
 
 custom_rag_prompt = ChatPromptTemplate.from_template(template)
-
 
 
 llm = ChatOpenAI(
@@ -199,14 +166,14 @@ rag_chain = (
 def get_response(query):
     return rag_chain.invoke(query)
 
+
 ##############################################
 # Classifier
 img_size = 224
 
-#testing cache
 @st.cache_resource
 def loadModel():
-    model = load_model('models/efficientnet-fine-6.keras')
+    model = load_model('models/efficientnet-fine-d1.keras')
     return model
 
 model = loadModel()
@@ -312,27 +279,53 @@ selected_dish = st.sidebar.selectbox(
 )
 
 # Right title
-st.title("Results")
+st.title("Welcome to FOOD CHAIN!")
+with st.expander("**What is FOOD CHAIN?**"):
+    st.markdown(
+        """
+        The project aims to use machine learning and computer vision techniques to analyze food images 
+        and identify them. By using diverse datasets, the model will learn to recognize dishes based on 
+        visual features. Our project aims to inform users about what it is they are eating, including 
+        potential nutritional value and an AI generated response on how their dish might have been prepared. 
+        We want users to have an easy way to figure out what their favorite foods contain, to know any 
+        allergens in the food and to better connect to the food around them. This tool can also tell users 
+        the calories of their dish, they can figure out the nutrients with only a few steps!
+
+        Thank you for using our project!
+        """
+    )
+
+# bottom
+with bottom():
+    st.markdown("Made by the Classify Crew: [Contact List](https://linktr.ee/classifycrew)")
+
+
 #################
+
 
 # Image Classification Section
 if uploaded_image and query:
-    # Open the image
-    input_image = Image.open(uploaded_image)
+    with st.expander("**Food Classification**", expanded=True, icon=':material/search_insights:'):
+        st.title("Results: Image Classification")
 
-    # Display the image
-    st.image(input_image, caption="Uploaded Image.", use_container_width=True)
-        
-    predictions = classifyImage(input_image)
-    fpredictions = ""
+        # Open the image
+        input_image = Image.open(uploaded_image)
 
-    # Show the top predictions with percentages
-    st.write("Top Predictions:")
-    for class_name, confidence in predictions:
-        if int(confidence) > 0.05:
-            fpredictions += f"{class_name}: {confidence:.2f}%,"
-        st.write(f"{class_name}: {confidence:.2f}%")
-    print(fpredictions)
+        # Display the image
+        st.image(input_image, caption="Uploaded Image.", use_container_width=True)
+            
+        predictions = classifyImage(input_image)
+        fpredictions = ""
+
+        # Show the top predictions with percentages
+        st.markdown("**Top Predictions:**")
+        for class_name, confidence in predictions:
+            if int(confidence) > 0.05:
+                fpredictions += f"{class_name}: {confidence:.2f}%,"
+            class_name = class_name.replace("_", " ")
+            class_name = class_name.title()
+            st.markdown(f"**{class_name}**: {confidence:.2f}%")
+        print(fpredictions)
 
     # call openai to pick the best classification result based on query
     openAICall = [
@@ -357,29 +350,42 @@ if uploaded_image and query:
 
     # RAG the openai response and display
     print("RAG INPUT", openAIresponse.content + " " + query)
-    RAGresponse = get_response(openAIresponse.content + " " + query)
-    display_response(RAGresponse)
+
+    with st.expander("Recipe Generation", expanded=True, icon=':material/menu_book:'):
+        st.title('Results: RAG')
+        RAGresponse = get_response(openAIresponse.content + " " + query)
+        display_response(RAGresponse)
 elif uploaded_image is not None:
-    # Open the image
-    input_image = Image.open(uploaded_image)
+    with st.expander("**Food Classification**", expanded=True, icon=':material/search_insights:'):
+        st.title("Results: Image Classification")
 
-    # Display the image
-    st.image(input_image, caption="Uploaded Image.", use_column_width=True)
+        # Open the image
+        input_image = Image.open(uploaded_image)
 
-    # Classify the image and display the result
-    predictions = classifyImage(input_image)
-    fpredictions = ""
+        # Display the image
+        st.image(input_image, caption="Uploaded Image.", use_container_width=True)
 
-    # Show the top predictions with percentages
-    st.write("Top Predictions:")
-    for class_name, confidence in predictions:
-        if int(confidence) > 0.05:
-            fpredictions += f"{class_name}: {confidence:.2f}%,"
-        st.write(f"{class_name}: {confidence:.2f}%")
-    print(fpredictions)
+        # Classify the image and display the result
+        predictions = classifyImage(input_image)
+        fpredictions = ""
+
+        # Show the top predictions with percentages
+        st.markdown("**Top Predictions:**")
+        for class_name, confidence in predictions:
+            if int(confidence) > 0.05:
+                fpredictions += f"{class_name}: {confidence:.2f}%,"
+            if int(confidence) > 5:
+                class_name = class_name.replace("_", " ")
+                class_name = class_name.title()
+                st.markdown(f"**{class_name}**: {confidence:.2f}%")
+        print(fpredictions)
 
 elif query:
-    response = get_response(query)
-    display_response(response)
+    with st.expander("**Recipe Generation**", expanded=True, icon=':material/menu_book:'):
+        st.title("Results: RAG")
+        response = get_response(query)
+        print(response,'\n\n\n\n\n\n\n')
+        display_response(response)
 else:
-    st.write("Please input an image and/or a prompt.")
+    st.warning("Please input an image and/or a prompt.", icon=':material/no_meals:')
+
