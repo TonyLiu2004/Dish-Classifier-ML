@@ -1,6 +1,6 @@
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![GitHub Repo][github-shield]][github-repo-url]
+[![Huggingface Space][huggingface-shield]][huggingface-url]
 
 [![Python][Python]][Python-url]
 [![Streamlit][Streamlit]][Streamlit-url]
@@ -12,11 +12,13 @@
 
 
 # FOOD CHAIN
-
 Welcome to Food Chain, a top of the line food classifier that everyday people can use to figure out what they are eating and the common values associated with it such as recipe, nutrients, and even the origin! Please tell us how you liked our app and thank you for using it!
+
+Site: [Food Chain](https://huggingface.co/spaces/tonyliu404/FoodChain)
 
 
 ## Who are we?
+The [Classify Crew](https://linktr.ee/classifycrew) is a group of students from the CUNY System studying computer science with an interest in Data Science.
 * [Tony Liu](https://tonyliu2004.github.io/)
     * Tony Liu is a junior at Hunter College.
 
@@ -51,7 +53,7 @@ After this we then built our app using [Streamlit](https://www.streamlit.io/) an
 
 
 ## Demo
-Video: 
+Video: <br>
 [placeholder]()
    
 QR Code: 
@@ -88,6 +90,10 @@ To use our site please follow the instructions below:
 [stars-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML/stargazers
 [github-repo-url]: https://github.com/TonyLiu2004/Dish-Classifier-ML
 [github-shield]: https://img.shields.io/badge/-GitHub-black.svg?style=for-the-badge&logo=github&colorB=000
+[linktree-shield]: https://img.shields.io/badge/Linktree-black.svg?style=for-the-badge&logo=linktree&colorB=000
+[linktree-url]: https://linktr.ee/classifycrew
+[huggingface-shield]: https://img.shields.io/badge/Huggingface-black.svg?style=for-the-badge&logo=huggingface&colorB=000
+[huggingface-url]: https://huggingface.co/spaces/tonyliu404/FoodChain
 [Python]: https://img.shields.io/badge/python-FFDE57?style=for-the-badge&logo=python&logoColor=4584B6
 [Python-url]: https://www.python.org/
 [Streamlit]: https://img.shields.io/badge/streamlit-ffffff?style=for-the-badge&logo=streamlit&logoColor=ff0000
