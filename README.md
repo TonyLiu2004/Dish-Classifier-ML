@@ -55,7 +55,9 @@ Video:
 [placeholder]()
    
 QR Code: 
-<img src='frame.png' width='300' height'300'>
+<p style='align-items: left'>
+   <img src='frame.png' width='300' height'300'>
+</p>
 
 
 ## Challenges
