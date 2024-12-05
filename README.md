@@ -52,9 +52,10 @@ After this we then built our app using [Streamlit](https://www.streamlit.io/) an
 
 ## Demo
 Video: 
-   [placeholder]()
+[placeholder]()
+   
 QR Code: 
-   ![QR code](frame.png)
+<img src='frame.png' width='300' height'300'>
 
 
 ## Challenges
