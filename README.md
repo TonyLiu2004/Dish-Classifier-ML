@@ -51,6 +51,11 @@ After this we then built our app using [Streamlit](https://www.streamlit.io/) an
 
 
 ## Demo
+Video: 
+   [placeholder]()
+QR Code: 
+   ![QR code](frame.png)
+
 
 ## Challenges
 On our path to complete this project a couple of challenges we ran into were:
